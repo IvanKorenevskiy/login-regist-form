@@ -34,7 +34,7 @@ function App(props) {
 
 
 
-//Функция регистрации  (пока без подтверждения пароля, для отправки емейл сообщения нужен домен. Валидация ещё не доделана)
+//Функция регистрации
   function Regist () {
     if (checkPassword === password&&password.length>=6&&email.length!==0&&name.length>=2&&lastName.length>=2){
       firebase.auth().createUserWithEmailAndPassword(email, password)
