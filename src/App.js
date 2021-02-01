@@ -39,7 +39,11 @@ function App(props) {
     if (checkPassword === password&&password.length>=6&&email.length!==0&&name.length>=2&&lastName.length>=2){
       firebase.auth().createUserWithEmailAndPassword(email, password)
       .then( onfulfilled => alert ("Регистрация прошла успешно!")) 
-      .catch()
+      .catch(error => {
+        if (error.code==="auth/email-already-in-use") {
+          alert ("Пользователь с такой почтой уже существует!")
+        } 
+      })
     }else {
       alert ("Заполните корректно форму регистрации!")
     }
@@ -63,8 +67,7 @@ function NameWarning (argument) {
 }
 
 function LastNameWarning (argument) {
-  if (name.length<2) {
-    console.log(name);
+  if (lastName.length<2) {
     return (<p style = {{color: "red"}}>Фамилия должно состоять не менее чем из двух символов *</p>)    
   }else {
     return null
@@ -73,8 +76,7 @@ function LastNameWarning (argument) {
 
 
 function PasswordWarning (argument) {
-  if (name.length<2) {
-    console.log(name);
+  if (password.length<6) {
     return (<p style = {{color: "red"}}>Пароль должен состоять не менее чем из 6 символов *</p>)    
   }else {
     return null
@@ -92,7 +94,7 @@ function EmailWarning (argument) {
   function SignIn () {
     firebase.auth().signInWithEmailAndPassword(signInEmail, signInPassword)
     .then( onfulfilled => {setHasAccount(true)})
-    .catch(error => console.log(error))
+    .catch(error => {alert ("Неправильный логин или пароль!")})
     
   }
 //функции, слушающие изменения в инпутах
@@ -130,16 +132,17 @@ function EmailWarning (argument) {
     setSignInPassword(event)
   }
 
+   function LogOut (event) {   
+    setHasAccount(false)
+  }
 
   //возвращаем вёрстку, если пользователь залогинился, перекидываем на страницу личного кабинета
   return (
     <div className="login-page">
       {hasAccount ?(
-        <Router>
-          <Switch>
-            <Route exact path="/" component={PersonalAccount}/>
-          </Switch>
-        </Router>
+
+            <PersonalAccount LogOut={LogOut}/>
+
       )
       :
       (
